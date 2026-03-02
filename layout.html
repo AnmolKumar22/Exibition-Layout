@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHRM - Exibition Layout</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --panel: #141414;
+    --border: #2a2a2a;
+    --accent: #c8a96e;
+    --accent2: #e8c584;
+    --stall2x2: #1e3a5f;
+    --stall2x2-border: #4a9ede;
+    --stall3x2: #3a1e1e;
+    --stall3x2-border: #de4a4a;
+    --text: #e8e0d0;
+    --muted: #666;
+    --green: #2d5a27;
+    --green-border: #4caf50;
+    --selected: #c8a96e;
+    --wall: #2d2d2d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .logo span { color: var(--text); font-size: 13px; letter-spacing: 1px; display: block; font-family: 'DM Sans', sans-serif; font-weight: 300; }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  .tool-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+
+  .tool-group label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--border); border-color: var(--accent); color: var(--accent); }
+  .btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .btn.danger { border-color: #de4a4a; color: #de4a4a; }
+  .btn.danger:hover { background: #de4a4a; color: #fff; }
+  .btn.success { border-color: var(--green-border); color: var(--green-border); }
+  .btn.success:hover { background: var(--green-border); color: #fff; }
+
+  .stall-palette {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .palette-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: grab;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1.5px dashed var(--border);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .palette-item:hover { border-color: var(--accent); }
+  .palette-item:active { cursor: grabbing; }
+
+  .palette-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 600;
+    border-radius: 3px;
+    border: 1.5px solid;
+  }
+
+  .palette-item[data-type="2x2"] .palette-preview {
+    width: 32px; height: 32px;
+    background: var(--stall2x2);
+    border-color: var(--stall2x2-border);
+    color: var(--stall2x2-border);
+  }
+  .palette-item[data-type="3x2"] .palette-preview {
+    width: 48px; height: 32px;
+    background: var(--stall3x2);
+    border-color: var(--stall3x2-border);
+    color: var(--stall3x2-border);
+  }
+  .palette-item[data-type="stage"] .palette-preview {
+    width: 40px; height: 40px;
+    background: #1a3a1a;
+    border-color: #4caf50;
+    color: #4caf50;
+    border-radius: 50% 50% 0 0;
+  }
+  .palette-item[data-type="counter"] .palette-preview {
+    width: 60px; height: 18px;
+    background: #2a2a1a;
+    border-color: #9e8a4a;
+    color: #9e8a4a;
+  }
+  .palette-item[data-type="label"] .palette-preview {
+    width: 40px; height: 22px;
+    background: #1a1a2a;
+    border-color: #4a4ade;
+    color: #4a4ade;
+    font-size: 8px;
+  }
+
+  .palette-item span {
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .stat {
+    text-align: center;
+    font-size: 11px;
+  }
+  .stat .val { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent); line-height: 1; }
+  .stat .lbl { color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 200px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sidebar h3 {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .prop-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .prop-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .prop-row label { font-size: 10px; color: var(--muted); }
+  .prop-row input, .prop-row select, .prop-row textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+  .prop-row input:focus, .prop-row select:focus { outline: none; border-color: var(--accent); }
+  .prop-row textarea { resize: vertical; min-height: 50px; }
+
+  .canvas-area {
+    flex: 1;
+    overflow: auto;
+    background: #0a0a0a;
+    position: relative;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    padding: 30px;
+    min-width: fit-content;
+    min-height: fit-content;
+  }
+
+  .hall-canvas {
+    position: relative;
+    background: #111;
+    border: 3px solid #444;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image:
+      linear-gradient(#fff 1px, transparent 1px),
+      linear-gradient(90deg, #fff 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .hall-label {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #555;
+    pointer-events: none;
+  }
+
+  .stall {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    user-select: none;
+    border-radius: 4px;
+    transition: box-shadow 0.12s, border-color 0.12s;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .stall.type-2x2 {
+    background: var(--stall2x2);
+    border: 2px solid var(--stall2x2-border);
+    color: var(--stall2x2-border);
+  }
+  .stall.type-3x2 {
+    background: var(--stall3x2);
+    border: 2px solid var(--stall3x2-border);
+    color: var(--stall3x2-border);
+  }
+  .stall.type-stage {
+    background: #1a3a1a;
+    border: 2px solid #4caf50;
+    color: #4caf50;
+    border-radius: 50% 50% 0 0;
+  }
+  .stall.type-counter {
+    background: #2a2a1a;
+    border: 2px dashed #9e8a4a;
+    color: #c8a96e;
+    border-radius: 4px;
+    font-size: 9px;
+  }
+  .stall.type-label {
+    background: rgba(26,26,42,0.8);
+    border: 1px dashed #4a4ade;
+    color: #8888ff;
+    font-size: 9px;
+    font-weight: 400;
+  }
+
+  .stall:hover {
+    box-shadow: 0 0 0 2px var(--accent), 0 4px 20px rgba(200,169,110,0.2);
+    z-index: 50;
+  }
+
+  .stall.selected {
+    box-shadow: 0 0 0 2.5px var(--accent), 0 6px 24px rgba(200,169,110,0.35);
+    z-index: 100;
+  }
+
+  .stall .stall-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .stall .stall-size {
+    font-size: 8px;
+    opacity: 0.7;
+    font-weight: 400;
+  }
+  .stall .stall-name {
+    font-size: 8px;
+    opacity: 0.85;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 90%;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .stall .resize-handle {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    cursor: se-resize;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  .stall:hover .resize-handle, .stall.selected .resize-handle { opacity: 1; }
+  .stall .resize-handle::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 50%, var(--accent) 50%);
+    border-radius: 0 0 2px 0;
+  }
+
+  .stall .delete-btn {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 16px;
+    height: 16px;
+    background: #de4a4a;
+    border: none;
+    border-radius: 0 3px 0 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    line-height: 1;
+    z-index: 10;
+    padding: 0;
+  }
+  .stall:hover .delete-btn, .stall.selected .delete-btn { opacity: 1; }
+
+  /* Entry/Exit markers */
+  .marker {
+    position: absolute;
+    background: rgba(222,74,74,0.15);
+    border: 2px solid #de4a4a;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #de4a4a;
+    font-weight: 700;
+    letter-spacing: 1px;
+    pointer-events: none;
+    text-align: center;
+    padding: 4px;
+  }
+
+  .drop-indicator {
+    position: absolute;
+    border: 2px dashed var(--accent);
+    background: rgba(200,169,110,0.08);
+    border-radius: 4px;
+    pointer-events: none;
+    display: none;
+    z-index: 200;
+  }
+
+  #context-menu {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    z-index: 1000;
+    display: none;
+    min-width: 150px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  #context-menu .cm-item {
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #context-menu .cm-item:hover { background: var(--border); }
+  #context-menu .cm-item.danger { color: #de4a4a; }
+  #context-menu hr { border: none; border-top: 1px solid var(--border); margin: 3px 0; }
+
+  .zoom-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 500;
+  }
+  .zoom-controls button {
+    width: 36px; height: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: monospace;
+  }
+  .zoom-controls button:hover { background: var(--border); border-color: var(--accent); color: var(--accent); }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #000;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .empty-prop {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .mode-indicator {
+    font-size: 10px;
+    color: var(--accent);
+    background: rgba(200,169,110,0.1);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 4px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+  <img src="download.png" width="100">
+  <BR>
+ 
+    <span>LAYOUT BUILDER</span>
+  </div>
+
+  <div class="toolbar">
+    <div class="tool-group">
+      <label>Add Stall</label>
+      <div class="stall-palette">
+        <div class="palette-item" data-type="2x2" draggable="true" title="Drag to canvas or click to add">
+          <div class="palette-preview">2×2</div>
+          <span>2×2m</span>
+        </div>
+        <div class="palette-item" data-type="3x2" draggable="true" title="Drag to canvas or click to add">
+          <div class="palette-preview">3×2</div>
+          <span>3×2m</span>
+        </div>
+        <div class="palette-item" data-type="stage" draggable="true">
+          <div class="palette-preview">🎭</div>
+          <span>Stage</span>
+        </div>
+        <div class="palette-item" data-type="counter" draggable="true">
+          <div class="palette-preview">Counter</div>
+          <span>Counter</span>
+        </div>
+        <div class="palette-item" data-type="label" draggable="true">
+          <div class="palette-preview">Text</div>
+          <span>Label</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-group">
+      <label>Actions</label>
+      <button class="btn" id="btnLoadDefault">Load Blueprint</button>
+      <button class="btn" id="btnClearAll" style="border-color:#de4a4a;color:#de4a4a">Clear All</button>
+      <button class="btn success" id="btnExport">Export JSON</button>
+      <button class="btn" id="btnSnapToggle">Snap: ON</button>
+      <span id="modeLabel" class="mode-indicator">Select Mode</span>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="val" id="count2x2">0</div><div class="lbl">2×2 Stalls</div></div>
+    <div class="stat"><div class="val" id="count3x2">0</div><div class="lbl">3×2 Stalls</div></div>
+    <div class="stat"><div class="val" id="countTotal">0</div><div class="lbl">Total</div></div>
+  </div>
+</header>
+
+<div class="main">
+  <div class="sidebar" id="propPanel">
+    <h3>Properties</h3>
+    <div id="propContent">
+      <p class="empty-prop">Select a stall to edit its properties</p>
+    </div>
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <div class="hall-canvas" id="hallCanvas" style="width:1130px;height:1010px;">
+        <div class="grid-overlay"></div>
+        <div class="drop-indicator" id="dropIndicator"></div>
+        <!-- Static labels -->
+        <div class="hall-label" style="top:2px;left:50%;transform:translateX(-50%)">DARBAR HALL — 112'5"</div>
+        <div class="hall-label" style="top:50%;left:2px;transform:rotate(-90deg) translateX(-50%);transform-origin:0 0;white-space:nowrap;top:500px;left:8px;transform:translateY(-50%) rotate(-90deg)">DARBAR HALL — 112'4"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="zoom-controls">
+  <button id="zoomIn" title="Zoom In">+</button>
+  <button id="zoomOut" title="Zoom Out">−</button>
+  <button id="zoomReset" title="Reset Zoom" style="font-size:11px">100%</button>
+</div>
+
+<div id="context-menu">
+  <div class="cm-item" id="cm-duplicate">📋 Duplicate</div>
+  <div class="cm-item" id="cm-rotate">🔄 Rotate</div>
+  <div class="cm-item" id="cm-tofront">⬆ Bring Front</div>
+  <div class="cm-item" id="cm-toback">⬇ Send Back</div>
+  <hr>
+  <div class="cm-item danger" id="cm-delete">🗑 Delete</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const canvas = document.getElementById('hallCanvas');
+const canvasWrapper = document.getElementById('canvasWrapper');
+const dropIndicator = document.getElementById('dropIndicator');
+
+let stalls = [];
+let selected = null;
+let stallCounter = 1;
+let snapEnabled = true;
+let zoom = 1;
+let dragging = null;
+let dragOffsetX = 0, dragOffsetY = 0;
+let contextTarget = null;
+
+// Grid snap
+const SNAP = 20;
+const CELL = 20; // 1m = 20px
+
+const typeDefaults = {
+  '2x2': { w: 2*CELL*2, h: 2*CELL*2, label: '2×2m' },   // 80x80
+  '3x2': { w: 3*CELL*2, h: 2*CELL*2, label: '3×2m' },   // 120x80
+  'stage': { w: 6*CELL*2, h: 6*CELL*2, label: 'Stage' },
+  'counter': { w: 8*CELL*2, h: 2*CELL, label: 'Counter' },
+  'label': { w: 6*CELL*2, h: 2*CELL, label: 'Text Label' },
+};
+
+function snap(v) {
+  return snapEnabled ? Math.round(v / SNAP) * SNAP : v;
+}
+
+function showToast(msg, dur=1800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+function updateStats() {
+  const c2 = stalls.filter(s=>s.type==='2x2').length;
+  const c3 = stalls.filter(s=>s.type==='3x2').length;
+  document.getElementById('count2x2').textContent = c2;
+  document.getElementById('count3x2').textContent = c3;
+  document.getElementById('countTotal').textContent = c2+c3;
+}
+
+function createStallElement(data) {
+  const el = document.createElement('div');
+  el.className = `stall type-${data.type}`;
+  el.style.left = data.x + 'px';
+  el.style.top = data.y + 'px';
+  el.style.width = data.w + 'px';
+  el.style.height = data.h + 'px';
+  el.dataset.id = data.id;
+
+  el.innerHTML = `
+    <div class="stall-num">${data.num || ''}</div>
+    <div class="stall-size">${typeDefaults[data.type]?.label||data.type}</div>
+    ${data.name ? `<div class="stall-name">${data.name}</div>` : ''}
+    <button class="delete-btn" title="Delete">×</button>
+    <div class="resize-handle" data-action="resize"></div>
+  `;
+
+  el.querySelector('.delete-btn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    deleteStall(data.id);
+  });
+
+  // Drag to move
+  el.addEventListener('mousedown', (e)=>{
+    if(e.target.dataset.action==='resize') return;
+    if(e.target.classList.contains('delete-btn')) return;
+    e.preventDefault();
+    selectStall(data.id);
+
+    const rect = canvas.getBoundingClientRect();
+    const stallRect = el.getBoundingClientRect();
+    dragOffsetX = (e.clientX - stallRect.left) / zoom;
+    dragOffsetY = (e.clientY - stallRect.top) / zoom;
+    dragging = { el, data, type: 'move' };
+  });
+
+  // Resize
+  el.querySelector('.resize-handle').addEventListener('mousedown', (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    selectStall(data.id);
+    dragging = { el, data, type: 'resize', startX: e.clientX/zoom, startY: e.clientY/zoom, startW: data.w, startH: data.h };
+  });
+
+  el.addEventListener('contextmenu', (e)=>{
+    e.preventDefault();
+    contextTarget = data.id;
+    selectStall(data.id);
+    showContextMenu(e.clientX, e.clientY);
+  });
+
+  canvas.appendChild(el);
+  return el;
+}
+
+function addStall(type, x, y) {
+  const def = typeDefaults[type];
+  const data = {
+    id: 'stall_' + Date.now() + Math.random(),
+    type,
+    x: snap(x),
+    y: snap(y),
+    w: def.w,
+    h: def.h,
+    num: (type==='2x2'||type==='3x2') ? stallCounter++ : '',
+    name: '',
+    zIndex: stalls.length+1
+  };
+  stalls.push(data);
+  createStallElement(data);
+  selectStall(data.id);
+  updateStats();
+  return data;
+}
+
+function deleteStall(id) {
+  const idx = stalls.findIndex(s=>s.id===id);
+  if(idx===-1) return;
+  stalls.splice(idx,1);
+  const el = canvas.querySelector(`[data-id="${id}"]`);
+  if(el) el.remove();
+  if(selected===id) { selected=null; renderProps(); }
+  updateStats();
+  showToast('Stall removed');
+}
+
+function selectStall(id) {
+  canvas.querySelectorAll('.stall.selected').forEach(e=>e.classList.remove('selected'));
+  selected = id;
+  const el = canvas.querySelector(`[data-id="${id}"]`);
+  if(el) el.classList.add('selected');
+  renderProps();
+}
+
+function getStall(id) { return stalls.find(s=>s.id===id); }
+
+function updateStallEl(id) {
+  const data = getStall(id);
+  if(!data) return;
+  const el = canvas.querySelector(`[data-id="${id}"]`);
+  if(!el) return;
+  el.style.left = data.x+'px';
+  el.style.top = data.y+'px';
+  el.style.width = data.w+'px';
+  el.style.height = data.h+'px';
+  el.style.zIndex = data.zIndex||1;
+  const numEl = el.querySelector('.stall-num');
+  if(numEl) numEl.textContent = data.num||'';
+  let nameEl = el.querySelector('.stall-name');
+  if(data.name) {
+    if(!nameEl) {
+      nameEl = document.createElement('div');
+      nameEl.className = 'stall-name';
+      el.insertBefore(nameEl, el.querySelector('.delete-btn'));
+    }
+    nameEl.textContent = data.name;
+  } else if(nameEl) nameEl.remove();
+}
+
+function renderProps() {
+  const panel = document.getElementById('propContent');
+  if(!selected) { panel.innerHTML = '<p class="empty-prop">Select a stall to edit</p>'; return; }
+  const data = getStall(selected);
+  if(!data) return;
+
+  panel.innerHTML = `
+    <div class="prop-group">
+      <div class="prop-row"><label>Stall Number</label><input type="text" id="prop-num" value="${data.num||''}"></div>
+      <div class="prop-row"><label>Exhibitor Name</label><input type="text" id="prop-name" value="${data.name||''}" placeholder="Company / Brand"></div>
+      <div class="prop-row"><label>Type</label>
+        <select id="prop-type">
+          <option value="2x2" ${data.type==='2x2'?'selected':''}>2×2m</option>
+          <option value="3x2" ${data.type==='3x2'?'selected':''}>3×2m</option>
+          <option value="stage" ${data.type==='stage'?'selected':''}>Stage</option>
+          <option value="counter" ${data.type==='counter'?'selected':''}>Counter</option>
+          <option value="label" ${data.type==='label'?'selected':''}>Label</option>
+        </select>
+      </div>
+      <div class="prop-row"><label>Width (px)</label><input type="number" id="prop-w" value="${data.w}" min="20" step="20"></div>
+      <div class="prop-row"><label>Height (px)</label><input type="number" id="prop-h" value="${data.h}" min="20" step="20"></div>
+      <div class="prop-row"><label>X Position</label><input type="number" id="prop-x" value="${data.x}" step="20"></div>
+      <div class="prop-row"><label>Y Position</label><input type="number" id="prop-y" value="${data.y}" step="20"></div>
+    </div>
+    <br>
+    <button class="btn danger" style="width:100%;margin-top:4px" onclick="deleteStall('${data.id}')">Delete Stall</button>
+  `;
+
+  ['num','name','type','w','h','x','y'].forEach(field=>{
+    const el = document.getElementById('prop-'+field);
+    if(!el) return;
+    el.addEventListener('input', ()=>{
+      const d = getStall(selected);
+      if(!d) return;
+      const val = (field==='w'||field==='h'||field==='x'||field==='y') ? parseInt(el.value)||0 : el.value;
+      d[field] = val;
+      if(field==='type') { 
+        const stallEl = canvas.querySelector(`[data-id="${selected}"]`);
+        if(stallEl) { stallEl.className = `stall type-${val}`; }
+      }
+      updateStallEl(selected);
+      updateStats();
+    });
+  });
+}
+
+// Mouse move for drag
+document.addEventListener('mousemove', (e)=>{
+  if(!dragging) return;
+  const canvasRect = canvas.getBoundingClientRect();
+
+  if(dragging.type==='move') {
+    const x = snap((e.clientX/zoom - canvasRect.left/zoom) - dragOffsetX);
+    const y = snap((e.clientY/zoom - canvasRect.top/zoom) - dragOffsetY);
+    dragging.data.x = Math.max(0, Math.min(x, canvas.offsetWidth - dragging.data.w));
+    dragging.data.y = Math.max(0, Math.min(y, canvas.offsetHeight - dragging.data.h));
+    updateStallEl(dragging.data.id);
+    renderProps();
+  } else if(dragging.type==='resize') {
+    const dx = (e.clientX/zoom - dragging.startX);
+    const dy = (e.clientY/zoom - dragging.startY);
+    dragging.data.w = snap(Math.max(40, dragging.startW + dx));
+    dragging.data.h = snap(Math.max(40, dragging.startH + dy));
+    updateStallEl(dragging.data.id);
+    renderProps();
+  }
+});
+
+document.addEventListener('mouseup', ()=>{ dragging = null; });
+
+// Click on canvas to deselect
+canvas.addEventListener('click', (e)=>{
+  if(e.target===canvas || e.target.classList.contains('grid-overlay') || e.target.classList.contains('hall-label')) {
+    selected = null;
+    canvas.querySelectorAll('.stall.selected').forEach(el=>el.classList.remove('selected'));
+    renderProps();
+  }
+});
+
+// Palette drag-to-canvas
+document.querySelectorAll('.palette-item').forEach(item=>{
+  item.addEventListener('dragstart', (e)=>{
+    e.dataTransfer.setData('stallType', item.dataset.type);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+
+  item.addEventListener('click', ()=>{
+    const type = item.dataset.type;
+    addStall(type, snap(Math.random()*800+50), snap(Math.random()*700+50));
+    showToast(`Added ${type} stall`);
+  });
+});
+
+canvas.addEventListener('dragover', (e)=>{
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = snap((e.clientX - rect.left)/zoom);
+  const y = snap((e.clientY - rect.top)/zoom);
+  const type = 'preview';
+  dropIndicator.style.display='block';
+  dropIndicator.style.left=x+'px';
+  dropIndicator.style.top=y+'px';
+  dropIndicator.style.width='80px';
+  dropIndicator.style.height='80px';
+});
+
+canvas.addEventListener('dragleave', ()=>{ dropIndicator.style.display='none'; });
+
+canvas.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  dropIndicator.style.display='none';
+  const type = e.dataTransfer.getData('stallType');
+  if(!type) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = snap((e.clientX - rect.left)/zoom);
+  const y = snap((e.clientY - rect.top)/zoom);
+  addStall(type, x, y);
+  showToast(`Added ${type} stall`);
+});
+
+// Zoom
+function applyZoom() {
+  canvasWrapper.style.transform = `scale(${zoom})`;
+  canvasWrapper.style.transformOrigin = 'top left';
+  document.getElementById('zoomReset').textContent = Math.round(zoom*100)+'%';
+}
+
+document.getElementById('zoomIn').addEventListener('click',()=>{ zoom=Math.min(zoom+0.1,3); applyZoom(); });
+document.getElementById('zoomOut').addEventListener('click',()=>{ zoom=Math.max(zoom-0.1,0.3); applyZoom(); });
+document.getElementById('zoomReset').addEventListener('click',()=>{ zoom=1; applyZoom(); });
+
+// Mouse wheel zoom
+document.getElementById('canvasArea').addEventListener('wheel',(e)=>{
+  if(!e.ctrlKey && !e.metaKey) return;
+  e.preventDefault();
+  zoom = Math.max(0.3, Math.min(3, zoom - e.deltaY*0.001));
+  applyZoom();
+}, {passive:false});
+
+// Context menu
+function showContextMenu(x,y) {
+  const cm = document.getElementById('context-menu');
+  cm.style.display='block';
+  cm.style.left=x+'px';
+  cm.style.top=y+'px';
+}
+function hideContextMenu() { document.getElementById('context-menu').style.display='none'; }
+
+document.addEventListener('click', hideContextMenu);
+
+document.getElementById('cm-delete').addEventListener('click',()=>{ if(contextTarget) deleteStall(contextTarget); });
+document.getElementById('cm-duplicate').addEventListener('click',()=>{
+  if(!contextTarget) return;
+  const src = getStall(contextTarget);
+  if(!src) return;
+  const newData = {...src, id:'stall_'+Date.now()+Math.random(), x:src.x+30, y:src.y+30, num: stallCounter++};
+  stalls.push(newData);
+  createStallElement(newData);
+  selectStall(newData.id);
+  updateStats();
+  showToast('Duplicated!');
+});
+document.getElementById('cm-rotate').addEventListener('click',()=>{
+  if(!contextTarget) return;
+  const d = getStall(contextTarget);
+  if(!d) return;
+  [d.w, d.h] = [d.h, d.w];
+  updateStallEl(contextTarget);
+  showToast('Rotated');
+});
+document.getElementById('cm-tofront').addEventListener('click',()=>{
+  if(!contextTarget) return;
+  const d = getStall(contextTarget);
+  if(d) { d.zIndex=999; updateStallEl(contextTarget); }
+});
+document.getElementById('cm-toback').addEventListener('click',()=>{
+  if(!contextTarget) return;
+  const d = getStall(contextTarget);
+  if(d) { d.zIndex=1; updateStallEl(contextTarget); }
+});
+
+// Snap toggle
+document.getElementById('btnSnapToggle').addEventListener('click', function(){
+  snapEnabled = !snapEnabled;
+  this.textContent = snapEnabled ? 'Snap: ON' : 'Snap: OFF';
+  this.classList.toggle('active', snapEnabled);
+  showToast(`Snap ${snapEnabled?'enabled':'disabled'}`);
+});
+
+// Keyboard delete
+document.addEventListener('keydown',(e)=>{
+  if((e.key==='Delete'||e.key==='Backspace') && selected) {
+    const tag = document.activeElement.tagName.toLowerCase();
+    if(tag==='input'||tag==='textarea'||tag==='select') return;
+    deleteStall(selected);
+  }
+  if(e.key==='Escape') { selected=null; canvas.querySelectorAll('.stall.selected').forEach(el=>el.classList.remove('selected')); renderProps(); }
+});
+
+// Export
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const data = JSON.stringify(stalls, null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'darbar_hall_layout.json';
+  a.click();
+  showToast('Exported!');
+});
+
+// Clear
+document.getElementById('btnClearAll').addEventListener('click',()=>{
+  if(!confirm('Clear all stalls?')) return;
+  stalls = [];
+  stallCounter = 1;
+  canvas.querySelectorAll('.stall').forEach(el=>el.remove());
+  selected = null;
+  renderProps();
+  updateStats();
+  showToast('Canvas cleared');
+});
+
+// Load blueprint from the image
+document.getElementById('btnLoadDefault').addEventListener('click', loadBlueprint);
+
+function loadBlueprint() {
+  if(stalls.length>0 && !confirm('Replace current layout with blueprint?')) return;
+  stalls=[];
+  canvas.querySelectorAll('.stall').forEach(el=>el.remove());
+  stallCounter = 1;
+
+  const blueprint = [
+    // Stage
+    {type:'stage', x:60, y:100, w:120, h:120, num:'', name:'Stage 10×8'},
+    // Console
+    {type:'counter', x:360, y:90, w:100, h:30, num:'', name:'Console 12\''},
+    // Buffet Counters
+    {type:'counter', x:520, y:90, w:160, h:30, num:'', name:'Buffet Counter'},
+    {type:'counter', x:700, y:90, w:160, h:30, num:'', name:'Buffet Counter'},
+
+    // Row: 69-72 top
+    {type:'2x2', x:460, y:180, w:80, h:80, num:69}, {type:'2x2', x:550, y:180, w:80, h:80, num:70},
+    {type:'2x2', x:640, y:180, w:80, h:80, num:71}, {type:'2x2', x:730, y:180, w:80, h:80, num:72},
+    // Row 65-68 below
+    {type:'2x2', x:460, y:270, w:80, h:80, num:65}, {type:'2x2', x:550, y:270, w:80, h:80, num:66},
+    {type:'2x2', x:640, y:270, w:80, h:80, num:67}, {type:'2x2', x:730, y:270, w:80, h:80, num:68},
+
+    // Row: 77-80
+    {type:'2x2', x:840, y:180, w:80, h:80, num:77}, {type:'2x2', x:930, y:180, w:80, h:80, num:78},
+    {type:'2x2', x:1020, y:180, w:80, h:80, num:79}, // 80 removed (way to wazir area)
+    // Row 73-76
+    {type:'2x2', x:840, y:270, w:80, h:80, num:73}, {type:'2x2', x:930, y:270, w:80, h:80, num:74},
+    {type:'2x2', x:1020, y:270, w:80, h:80, num:75},
+
+    // Left column stalls 31-36
+    {type:'3x2', x:60, y:320, w:80, h:120, num:36},
+    {type:'3x2', x:60, y:390, w:80, h:120, num:35},
+    {type:'2x2', x:60, y:460, w:80, h:80, num:34},
+    {type:'2x2', x:60, y:510, w:80, h:80, num:33},
+    {type:'3x2', x:60, y:570, w:80, h:120, num:32},
+    {type:'3x2', x:60, y:660, w:80, h:120, num:31},
+
+    // Right small stalls 81-84
+    {type:'3x2', x:1060, y:350, w:80, h:120, num:82},
+    {type:'3x2', x:1060, y:440, w:80, h:120, num:81},
+    {type:'3x2', x:1060, y:150, w:80, h:120, num:84},
+    {type:'2x2', x:1060, y:240, w:80, h:80, num:83},
+
+    // Middle large stalls rows 58-64
+    {type:'3x2', x:460, y:380, w:120, h:80, num:64}, {type:'3x2', x:550, y:380, w:120, h:80, num:63},
+    {type:'3x2', x:670, y:380, w:120, h:80, num:62}, {type:'3x2', x:790, y:380, w:120, h:80, num:61},
+    {type:'3x2', x:850, y:380, w:120, h:80, num:60}, {type:'3x2', x:920, y:380, w:120, h:80, num:59},
+    {type:'3x2', x:990, y:380, w:120, h:80, num:58},
+    // Row 51-57
+    {type:'3x2', x:460, y:470, w:120, h:80, num:51}, {type:'3x2', x:560, y:470, w:120, h:80, num:52},
+    {type:'3x2', x:660, y:470, w:120, h:80, num:53}, {type:'3x2', x:760, y:470, w:120, h:80, num:54},
+    {type:'3x2', x:860, y:470, w:120, h:80, num:55}, {type:'3x2', x:960, y:470, w:120, h:80, num:56},
+
+    // Row 44-50
+    {type:'2x2', x:360, y:580, w:80, h:80, num:50}, {type:'2x2', x:450, y:580, w:80, h:80, num:49},
+    {type:'3x2', x:540, y:580, w:120, h:80, num:48}, {type:'3x2', x:660, y:580, w:120, h:80, num:47},
+    {type:'3x2', x:780, y:580, w:120, h:80, num:46}, {type:'3x2', x:900, y:580, w:120, h:80, num:45},
+    {type:'3x2', x:1020, y:580, w:120, h:80, num:44},
+    // Row below
+    {type:'2x2', x:360, y:670, w:80, h:80, num:37}, {type:'2x2', x:450, y:670, w:80, h:80, num:38},
+    {type:'3x2', x:540, y:670, w:120, h:80, num:39}, {type:'3x2', x:660, y:670, w:120, h:80, num:40},
+    {type:'3x2', x:780, y:670, w:120, h:80, num:41}, {type:'3x2', x:900, y:670, w:120, h:80, num:42},
+    {type:'3x2', x:1020, y:670, w:120, h:80, num:43},
+
+    // Tea/Coffee counter
+    {type:'counter', x:460, y:800, w:280, h:40, num:'', name:'Tea/Coffee/Desert Counter'},
+
+    // Bottom row 24-30
+    {type:'3x2', x:200, y:900, w:120, h:80, num:30}, {type:'3x2', x:300, y:900, w:120, h:80, num:29},
+    {type:'3x2', x:400, y:900, w:120, h:80, num:28}, {type:'3x2', x:500, y:900, w:120, h:80, num:27},
+    {type:'3x2', x:600, y:900, w:120, h:80, num:26}, {type:'3x2', x:700, y:900, w:120, h:80, num:25},
+    {type:'3x2', x:800, y:900, w:120, h:80, num:24},
+
+    // Diagonal stalls 21-23
+    {type:'3x2', x:960, y:760, w:120, h:80, num:21},
+    {type:'3x2', x:920, y:840, w:120, h:80, num:22},
+    {type:'3x2', x:880, y:910, w:120, h:80, num:23},
+
+    // Entry/Exit labels
+    {type:'label', x:1080, y:570, w:80, h:50, num:'', name:'ENTRY & EXIT'},
+    {type:'label', x:1080, y:260, w:80, h:60, num:'', name:'WAY TO WAZIR HALL →'},
+  ];
+
+  blueprint.forEach(b=>{
+    const data = {
+      id: 'stall_'+Date.now()+Math.random(),
+      type: b.type,
+      x: b.x, y: b.y, w: b.w, h: b.h,
+      num: b.num||'',
+      name: b.name||'',
+      zIndex: stalls.length+1
+    };
+    if((b.type==='2x2'||b.type==='3x2') && b.num) stallCounter = Math.max(stallCounter, Number(b.num)+1);
+    stalls.push(data);
+    createStallElement(data);
+  });
+
+  updateStats();
+  showToast('Blueprint loaded! All stalls are draggable.', 2500);
+}
+
+// Auto-load blueprint
+loadBlueprint();
+</script>
+</body>
+</html>
